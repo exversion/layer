@@ -34,3 +34,8 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Misc
+config.py
+command_line_curl
+src/backups/*
