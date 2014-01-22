@@ -40,3 +40,4 @@ config.py
 command_line_curl
 src/backups/*
 setup*
+exlayer.log
