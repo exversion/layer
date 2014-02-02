@@ -2,18 +2,17 @@
 
 from flask import Flask, request, jsonify, Response
 from flask.ext.restful import Resource, Api
-
 import psycopg2, psycopg2.extras, copy, json, subprocess, random, logging, io, sys, os, StringIO, uuid, csv
 
 import helper
-from view import treeView, branchView, lineView, bulkView
+from view import treeView, createBranchView, branchView, lineView, bulkView
 
 
 
 def create_app():
 
 	app = Flask(__name__)
-	api = Api(app)
+	api = Api(app, catch_all_404s=True)
 
 	logging.basicConfig(filename='exlayer.log', level=logging.DEBUG)
 
@@ -27,7 +26,7 @@ def create_app():
 			return jsonify(dict(status=400, success=False, message='Too many connections'))
 
 		#Are our basic tables setup? If not, set them up automatically
-		if not helper.layer_setup(conn):
+		if not helper.layer_set_up(conn):
 			cur = conn.cursor()
 			try:
 				#Setup branches 
@@ -162,13 +161,16 @@ def create_app():
 
 
 	api.add_resource(treeView.dataTree, '/<tree_name>/')
-	api.add_resource(branchView.createBranch, '/<tree_name>/branch/')
-	api.add_resource(branchView.treeBranch, '/<tree_name>/branch/<branch_identifier>/')
 	api.add_resource(lineView.lineData, '/<tree_name>/line/<line_id>/')
-	api.add_resource(bulkView.bulkData, '/<tree_name>/bulk/<bulk_id>/')
+	api.add_resource(bulkView.bulkData, '/<tree_name>/bulk/<bulk_id>/', methods=['GET','DELETE'])
+	api.add_resource(createBranchView.createBranch, '/<tree_name>/branch/')
+	api.add_resource(branchView.branchData, '/<tree_name>/branch/<branch_identifier>/')
 	
+	app.config.from_pyfile(os.path.dirname('../config/config.py')+'/../config/config.py')
 
-	app.config.from_pyfile('../config/config.py')
+	#@app.before_request
+    #	def write_access_log():
+    #		return 'Path: '+request.path
 
 	return app
 

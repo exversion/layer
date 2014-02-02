@@ -20,10 +20,16 @@ class lineData(Resource):
 			return jsonify(dict(status=400, success=False, message='No tree named '+name+' found'))
 
 		#Pull row from tree_name_line
+		try:
+			uuid.UUID(line_id).hex
+		except:
+			return jsonify(dict(status=400, success=False, message= 'Line id improperly formatted.'))
+
 		cur.execute('SELECT * from '+name+'_line WHERE id= %s', (line_id,))
+
 		line = cur.fetchone()
 		if line is None:
-			return jsonify({'status': 400, 'success':False, 'message': 'No line with the id '+line_id})			
+			return jsonify(dict(status=400, success=False, message= 'No line with the id '+line_id))			
 		conn.close()
 
 		return jsonify({'status': 200, 'success':True, 'tree': name, 'line': line})

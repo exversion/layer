@@ -19,9 +19,18 @@ class bulkData(Resource):
 			conn.close()
 			return jsonify(dict(status=400, success=False, message='No tree named '+name+' found'))
 
+		try:
+			uuid.UUID(bulk_id).hex
+		except:
+			return jsonify(dict(status=400, success=False, message= 'Bulk id improperly formatted.'))
+
+
 		#Pull row from tree_name_line
 		cur.execute('SELECT * from '+name+'_bulk WHERE id= %s', (bulk_id,))
 		lines = cur.fetchone()
+		if lines is None:
+			return jsonify(dict(status=400, success=False, message= 'No line with the id '+bulk_id))			
+		
 		conn.close()
 
 		return jsonify({'status': 200, 'success':True, 'tree': name, 'bulk': lines})
@@ -58,3 +67,9 @@ class bulkData(Resource):
 		conn.close()
 
 		return jsonify({'status':200, 'success':True, 'message':'bulk transaction '+bulk_id+' has been removed.', 'data':bulk})
+
+	def put(self):
+		return jsonify({'status':400, 'success':False, 'message':'Move along... nothing to see here.'})
+
+	def post(self):
+		return jsonify({'status':400, 'success':False, 'message':'Move along... nothing to see here.'})

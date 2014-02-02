@@ -17,6 +17,7 @@ develop-eggs
 .installed.cfg
 lib
 lib64
+flask
 __pycache__
 
 # Installer logs
@@ -41,3 +42,4 @@ command_line_curl
 src/backups/*
 setup*
 exlayer.log
+monitor.py
