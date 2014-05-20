@@ -3,6 +3,7 @@ from flask.ext.restful import Resource, Api
 import psycopg2, psycopg2.extras, copy, json, subprocess, random, logging, io, sys, os, StringIO, uuid, csv
 from src import helper
 
+logging.basicConfig(filename='exlayer.log', level=logging.DEBUG)
 
 class dataTree(Resource):
 	def get(self, tree_name):
@@ -16,7 +17,7 @@ class dataTree(Resource):
 		psycopg2.extras.register_json(conn)
 		if not helper.tree_exists(conn, name+'_line'):
 			conn.close()
-			return jsonify(dict(statuss=400, success=False, message='No tree named '+name+' found'))
+			return jsonify(dict(status=400, success=False, message='No tree named '+name+' found'))
 
 		#select all commits from tree_name_line table
 		cur.execute('SELECT * from '+name+'_line ORDER BY created_at DESC LIMIT 200')
@@ -174,22 +175,22 @@ class dataTree(Resource):
 
 		#Write backup file
 		try:
-			os.system(helper.dump_command(name, os.path.dirname(__file__)+'/backups/'+name+'.sql'))
+			os.system(helper.dump_command(name, os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'backups', name+'.sql'))))
 		except:
-			app.logger.debug('Backup of '+name+' tables failed')
+			logging.debug('Backup of '+name+' tables failed')
 			conn.close()
 			return jsonify(dict(status=400, message='Not able to delete tree named '+name+' at this time. Please check the logs for more information'))
 
 		#Backup branch info
 		try:
-			branches_file = os.path.dirname(__file__)+'/backups/'+name+'_branches.csv'
+			branches_file = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'backups', name+'_branches.csv'))
 			bf = io.open(branches_file,'w')
 			sql = "COPY (select * from exlayer_branches where tree_name = '%s') TO STDOUT WITH CSV HEADER" % (name,)
 			cur.copy_expert(sql, bf)
 			bf.close()
 
 		except Exception, e:
-			app.logger.debug('Backup of '+name+' branches failed: '+str(e))
+			logging.debug('Backup of '+name+' branches failed: '+str(e))
 			conn.close()
 			return jsonify(dict(status=400, message='Not able to delete tree named '+name+' at this time. Please check the logs for more information'))
 

@@ -32,7 +32,7 @@ class lineData(Resource):
 			return jsonify(dict(status=400, success=False, message= 'No line with the id '+line_id))			
 		conn.close()
 
-		return jsonify({'status': 200, 'success':True, 'tree': name, 'line': line})
+		return jsonify({'status': 200, 'success':True, 'tree': name, 'line': line, 'line_id': line_id})
 
 	def delete(self, tree_name, line_id):
 		#check that table with tree_name exists

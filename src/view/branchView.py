@@ -14,20 +14,20 @@ class branchData(Resource):
 		psycopg2.extras.register_json(conn)
 		if not helper.tree_exists(conn, name+'_line'):
 			conn.close()
-			return jsonify(dict(statuss=400, success=False, message='No tree named '+name+' found'))
+			return jsonify(dict(status=400, success=False, message='No tree named '+name+' found'))
 
 		#If branch name is provided instead of id, grab id
 		branch_id, branch_name = helper.ensure_branch_id(conn, name, branch_identifier)
 		if branch_id == False:
 			conn.close()
-			return jsonify(dict(statuss=400, success=False, message=str(branch_identifier)+' is not a valid branch name or id for tree '+name+'.'))
+			return jsonify(dict(status=400, success=False, message=str(branch_identifier)+' is not a valid branch name or id for tree '+name+'.'))
 
 		#select all commits from tree_name_line table
 		cur.execute('SELECT * from '+name+'_line WHERE branch_id = %s ORDER BY created_at DESC LIMIT 200', (branch_id,))
 		lines = cur.fetchall() 
 
 		#select all bulk updates from tree_name_bulk table
-		cur.execute('SELECT id, lines, meta, created_at from '+name+'_bulk WHERE branch_id = %s', (branch_id,))
+		cur.execute('SELECT id, lines, meta, created_at from '+name+'_bulk WHERE branch_id = %s ORDER BY created_at DESC', (branch_id,))
 		bulk = cur.fetchall()
 		conn.close()
 

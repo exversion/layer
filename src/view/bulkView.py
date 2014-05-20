@@ -33,7 +33,7 @@ class bulkData(Resource):
 		
 		conn.close()
 
-		return jsonify({'status': 200, 'success':True, 'tree': name, 'bulk': lines})
+		return jsonify({'status': 200, 'success':True, 'tree': name, 'bulk': lines, 'bulk_id':bulk_id})
 	
 	def delete(self, tree_name, bulk_id):
 		#check that table with tree_name exists

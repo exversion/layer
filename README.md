@@ -6,6 +6,9 @@ a RESTful webservice for data version control. Written in python, using Flask an
 Requirements
 -------------
 Layer is built to run on top of Postgres 9.3.
+-Install sudo apt-get install libpq-dev python-dev
+-Run requirements.txt
+-Create config.py file
 
 Configuration
 -------------

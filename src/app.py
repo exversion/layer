@@ -5,7 +5,7 @@ from flask.ext.restful import Resource, Api
 import psycopg2, psycopg2.extras, copy, json, subprocess, random, logging, io, sys, os, StringIO, uuid, csv
 
 import helper
-from view import treeView, createBranchView, branchView, lineView, bulkView
+from view import treeView, createBranchView, branchView, lineView, bulkView, schemaView, schemaRemove
 
 
 
@@ -30,9 +30,9 @@ def create_app():
 			cur = conn.cursor()
 			try:
 				#Setup branches 
-				cur.execute('CREATE TABLE exlayer_branches (id serial, tree_name text, meta json, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())')
+				cur.execute('CREATE TABLE exlayer_branches (id serial, branch_name text, tree_name text, meta json, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())')
 				#Setup schema
-				cur.execute('CREATE TABLE exlayer_schema (id uuid DEFAULT uuid_generate_v1mc(), tree_name text, branch_id int, fields text[], meta json, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())')
+				cur.execute('CREATE TABLE exlayer_schema (id uuid DEFAULT uuid_generate_v1mc(), tree_name text, branch_id text, fields text, meta json, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())')
 				conn.commit()
 			except:
 				return jsonify({'status': 400, 'success':False, 'message':'Sorry, layer could not setup. Check DB settings and permissions and try again', 'db':app.config['DBNAME'], 'user':app.config['DBUSER']})				
@@ -165,6 +165,8 @@ def create_app():
 	api.add_resource(bulkView.bulkData, '/<tree_name>/bulk/<bulk_id>/', methods=['GET','DELETE'])
 	api.add_resource(createBranchView.createBranch, '/<tree_name>/branch/')
 	api.add_resource(branchView.branchData, '/<tree_name>/branch/<branch_identifier>/')
+	api.add_resource(schemaView.schemaData, '/<tree_name>/schema/<branch_identifier>/')
+	api.add_resource(schemaRemove.removeSchema, '/<tree_name>/schema/<branch_identifier>/<schema_id>/',methods=['DELETE'])
 	
 	app.config.from_pyfile(os.path.dirname('../config/config.py')+'/../config/config.py')
 
