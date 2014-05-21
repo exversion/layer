@@ -32,7 +32,7 @@ def create_app():
 				#Setup branches 
 				cur.execute('CREATE TABLE exlayer_branches (id serial, branch_name text, tree_name text, meta json, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())')
 				#Setup schema
-				cur.execute('CREATE TABLE exlayer_schema (id uuid DEFAULT uuid_generate_v1mc(), tree_name text, branch_id text, fields text, meta json, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())')
+				cur.execute('CREATE TABLE exlayer_schema (id uuid DEFAULT uuid_generate_v1mc(), tree_name text, branch_id int, fields text, meta json, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())')
 				conn.commit()
 			except:
 				return jsonify({'status': 400, 'success':False, 'message':'Sorry, layer could not setup. Check DB settings and permissions and try again', 'db':app.config['DBNAME'], 'user':app.config['DBUSER']})				

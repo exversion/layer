@@ -23,7 +23,7 @@ class schemaData(Resource):
 			return jsonify(dict(status=400, success=False, message=str(branch_identifier)+' is not a valid branch name or id for tree '+name+'.'))
 
 		#select all commits from tree_name_line table
-		cur.execute('SELECT * from exlayer_schema WHERE tree_name = %s AND branch_id = %s ORDER BY created_at DESC LIMIT 200', (name, branch_name))
+		cur.execute('SELECT * from exlayer_schema WHERE tree_name = %s AND branch_id = %s ORDER BY created_at DESC LIMIT 200', (name, branch_id))
 		changes = cur.fetchall() 
 
 		return jsonify({'status': 200, 'success':True, 'tree': name, 'schema_changes': changes})
@@ -56,7 +56,7 @@ class schemaData(Resource):
 
 		field = data.get('field','')
 		meta = data.get('meta', {})
-		cur.execute('INSERT into exlayer_schema (tree_name, branch_id, fields, meta) VALUES (%s,%s,%s,%s) RETURNING exlayer_schema.id', (name, branch_name, field, json.dumps(meta)))
+		cur.execute('INSERT into exlayer_schema (tree_name, branch_id, fields, meta) VALUES (%s,%s,%s,%s) RETURNING exlayer_schema.id', (name, branch_id, field, json.dumps(meta)))
 		conn.commit()
 		schema_id = cur.fetchone()['id']
 		conn.close()
