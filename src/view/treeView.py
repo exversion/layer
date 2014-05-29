@@ -108,7 +108,7 @@ class dataTree(Resource):
 			u['branch_id'] = branch_id
 
 			#Insert into line table
-			lines.append(u)
+			lines.append({k:v.encode('utf8') if isinstance(v, unicode) else v for k,v in u.items()})
 
 		#use COPY to do a super fast bulk insert
 		cols = ['id','branch_id','old_state','new_state','primary_key','meta','created_at']

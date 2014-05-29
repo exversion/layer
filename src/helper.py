@@ -72,15 +72,19 @@ def tree_exists(conn, name):
 
 def branch_exists(conn, name):
 
-	cur = conn.cursor()
+	try:
+		cur = conn.cursor()
 
-	cur.execute("select id from exlayer_branches where branch_name=%s", (name,))
+		cur.execute("select id from exlayer_branches where branch_name=%s", (name,))
 
-	branch = cur.fetchone()
+		branch = cur.fetchone()
 
-	if branch is not None:
+		if branch is not None:
 
-		return branch[0]
+			return branch[0]
+
+	except:
+		return False
 
 	return False
 
