@@ -6,7 +6,7 @@ from config import config
 
 def setConnection():
 	#try:
-		conn = psycopg2.connect("host='"+config.DATABASE_HOST+"' dbname='"+config.DBNAME+"' user='"+config.DBUSER+"' password='"+config.DBPASSWORD+"'")
+		conn = psycopg2.connect("host='"+config.DATABASE_HOST+"' dbname='"+config.DBNAME+"' user='"+config.DBUSER+"' password='"+config.DBPASSWORD+"' port="+config.PORT)
 		return conn
 	#except:
 		#return False
